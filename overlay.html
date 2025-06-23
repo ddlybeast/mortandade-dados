@@ -14,24 +14,16 @@
 <div id="overlayResult">Aguardando rolagem...</div>
 
 <script>
-const firebaseConfig = {
-
-  apiKey: "AIzaSyDW7ebno-w4ndmPVnLXHJOxj2wlDQ2a4tc",
-
-  authDomain: "mortandade-rpg-dice.firebaseapp.com",
-
-  databaseURL: "https://mortandade-rpg-dice-default-rtdb.firebaseio.com",
-
-  projectId: "mortandade-rpg-dice",
-
-  storageBucket: "mortandade-rpg-dice.firebasestorage.app",
-
-  messagingSenderId: "633433480898",
-
-  appId: "1:633433480898:web:26f8813045490b12c4655b"
-
-};
-
+  // Configuração Firebase (mesma do index.html)
+  const firebaseConfig = {
+    apiKey: "AIzaSyDW7ebno-w4ndmPVnLXHJOxj2wlDQ2a4tc",
+    authDomain: "mortandade-rpg-dice.firebaseapp.com",
+    databaseURL: "https://mortandade-rpg-dice-default-rtdb.firebaseio.com",
+    projectId: "mortandade-rpg-dice",
+    storageBucket: "mortandade-rpg-dice.appspot.com",
+    messagingSenderId: "633433480898",
+    appId: "1:633433480898:web:26f8813045490b12c4655b"
+  };
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
