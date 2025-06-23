@@ -20,5 +20,36 @@
     updateOverlay();
   </script>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+  apiKey: "AIzaSyDW7ebno-w4ndmPVnLXHJOxj2wlDQ2a4tc",
+  authDomain: "mortandade-rpg-dice.firebaseapp.com",
+  databaseURL: "https://mortandade-rpg-dice-default-rtdb.firebaseio.com",
+  projectId: "mortandade-rpg-dice",
+  storageBucket: "mortandade-rpg-dice.firebasestorage.app",
+  messagingSenderId: "633433480898",
+  appId: "1:633433480898:web:26f8813045490b12c4655b"
+};
+
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  function updateOverlay() {
+    db.ref("ultimaRolagem").on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        document.getElementById("overlayResult").innerText = data.resultado;
+      } else {
+        document.getElementById("overlayResult").innerText = "Aguardando rolagem...";
+      }
+    });
+  }
+
+  updateOverlay();
+</script>
+
 </body>
 </html>

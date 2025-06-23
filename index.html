@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <meta charset="UTF-8">
   <title>Mortandade RPG - Rolador de Dados</title>
   <style>
@@ -40,6 +41,37 @@
   <h2 id="result"></h2>
 
   <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDW7ebno-w4ndmPVnLXHJOxj2wlDQ2a4tc",
+  authDomain: "mortandade-rpg-dice.firebaseapp.com",
+  databaseURL: "https://mortandade-rpg-dice-default-rtdb.firebaseio.com",
+  projectId: "mortandade-rpg-dice",
+  storageBucket: "mortandade-rpg-dice.firebasestorage.app",
+  messagingSenderId: "633433480898",
+  appId: "1:633433480898:web:26f8813045490b12c4655b"
+};
+
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+function rollDice() {
+  const type = parseInt(document.getElementById('diceType').value);
+  const count = parseInt(document.getElementById('diceCount').value);
+  let rolls = [];
+  for (let i = 0; i < count; i++) {
+    rolls.push(Math.floor(Math.random() * type) + 1);
+  }
+  const total = rolls.reduce((a, b) => a + b, 0);
+  const resultText = `Rolagem: ${rolls.join(' + ')} = ${total}`;
+  document.getElementById('result').innerText = resultText;
+
+  // Salvar no Firebase
+  db.ref("ultimaRolagem").set({
+    resultado: resultText,
+    timestamp: Date.now()
+  });
+}
     function rollDice() {
       const type = parseInt(document.getElementById('diceType').value);
       const count = parseInt(document.getElementById('diceCount').value);
