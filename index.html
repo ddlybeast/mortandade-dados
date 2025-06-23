@@ -6,14 +6,18 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <style>
-    body {
-      background-color: #1c1c1c;
-      color: #e0e0e0;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
+  @font-face {
+    font-family: 'Democratica';
+    src: url('fonts/Democratica.ttf') format('truetype');
+  }
 
+  body {
+    background-color: #1c1c1c;
+    color: #e0e0e0;
+    font-family: 'Democratica', Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
     h1 {
       color: #a30000;
       text-transform: uppercase;
@@ -61,7 +65,13 @@
 
   <div>
     <label for="playerName">Nome do peão:</label>
-    <input type="text" id="playerName" placeholder="Meu nome">
+    <select id="playerName">
+      <option value="Vazio">Vazio</option>
+      <option value="Zarina">Zarina</option>
+      <option value="Abaddon">Abaddon</option>
+      <option value="Qing-Yu">Qing-Yu</option>
+      <option value="Harold">Harold</option>
+    </select>
   </div>
 
   <div>
@@ -107,12 +117,7 @@
     function rollDice() {
       const type = parseInt(document.getElementById('diceType').value);
       const count = parseInt(document.getElementById('diceCount').value);
-      const playerName = document.getElementById('playerName').value.trim();
-
-      if (playerName === '') {
-        alert('Por favor, insira o nome do peão.');
-        return;
-      }
+      const playerName = document.getElementById('playerName').value;
 
       let rolls = [];
       for (let i = 0; i < count; i++) {

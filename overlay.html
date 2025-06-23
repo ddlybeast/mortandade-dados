@@ -2,50 +2,92 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Overlay Mortandade RPG</title>
+  <title>Overlay Mortandade RPG - Glow e Fade Rápido</title>
   <style>
+    @font-face {
+      font-family: 'Democratica';
+      src: url('fonts/Democratica.ttf') format('truetype');
+    }
+
     body {
       background: transparent;
       margin: 0;
       padding: 0;
       overflow: hidden;
-      font-family: Arial, sans-serif;
+      font-family: 'Democratica', Arial, sans-serif;
     }
 
-    #overlayContainer {
+    .playerContainer {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      width: 512px;
+      height: 512px;
       text-align: center;
       opacity: 0;
-      transition: opacity 1s ease;
+      transition: opacity 0.3s ease;
     }
 
-    #overlayContainer img {
-      width: 200px;
-      height: auto;
+    .playerContainer img {
+      width: 512px;
+      height: 512px;
+      display: block;
     }
 
-    #rollNumber {
+    .rollNumber {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      color: #fff;
-      font-size: 48px;
+      font-size: 120px;
       font-weight: bold;
-      text-shadow: 2px 2px 4px #000;
+      color: white;
+      text-shadow: 0 0 10px white;
+      pointer-events: none;
     }
+
+    /* Glow colorido por jogador */
+    .glow-Abaddon { text-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00; }  /* Verde */
+    .glow-Zarina { text-shadow: 0 0 30px #ff69b4, 0 0 60px #ff69b4; }  /* Rosa */
+    .glow-Qing-Yu { text-shadow: 0 0 30px #00bfff, 0 0 60px #00bfff; } /* Azul */
+    .glow-Harold { text-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700; }  /* Amarelo */
+    .glow-Vazio { text-shadow: 0 0 30px white, 0 0 60px white; }        /* Branco */
+
+    /* Exemplo de posições (ajuste conforme quiser) */
+    #player-Zarina { top: 5%; left: 5%; }
+    #player-Abaddon { top: 5%; left: 55%; }
+    #player-Qing-Yu { top: 55%; left: 5%; }
+    #player-Harold { top: 55%; left: 55%; }
+    #player-Vazio { top: 30%; left: 30%; }
   </style>
+
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-  <div id="overlayContainer">
+  <!-- Containers de cada personagem -->
+  <div id="player-Zarina" class="playerContainer">
     <img src="dice-d8.png" alt="Dado">
-    <div id="rollNumber"></div>
+    <div class="rollNumber glow-Zarina"></div>
+  </div>
+
+  <div id="player-Abaddon" class="playerContainer">
+    <img src="dice-d8.png" alt="Dado">
+    <div class="rollNumber glow-Abaddon"></div>
+  </div>
+
+  <div id="player-Qing-Yu" class="playerContainer">
+    <img src="dice-d8.png" alt="Dado">
+    <div class="rollNumber glow-Qing-Yu"></div>
+  </div>
+
+  <div id="player-Harold" class="playerContainer">
+    <img src="dice-d8.png" alt="Dado">
+    <div class="rollNumber glow-Harold"></div>
+  </div>
+
+  <div id="player-Vazio" class="playerContainer">
+    <img src="dice-d8.png" alt="Dado">
+    <div class="rollNumber glow-Vazio"></div>
   </div>
 
   <script>
@@ -62,22 +104,22 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const overlay = document.getElementById('overlayContainer');
-    const rollNumber = document.getElementById('rollNumber');
+    const players = ["Zarina", "Abaddon", "Qing-Yu", "Harold", "Vazio"];
 
-    function showRollResult(number) {
-      rollNumber.innerText = number;
-      overlay.style.opacity = 1;
+    players.forEach(player => {
+      const container = document.getElementById('player-' + player);
+      const numberDiv = container.querySelector('.rollNumber');
 
-      setTimeout(() => {
-        overlay.style.opacity = 0;
-      }, 3000);  // 3 segundos visível
-    }
+      db.ref('rolagens/' + player).limitToLast(1).on('child_added', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          numberDiv.innerText = data.resultado;
+          container.style.opacity = 1;
 
-    db.ref('rolagens').limitToLast(1).on('child_added', (snapshot) => {
-      snapshot.ref.limitToLast(1).on('child_added', (subSnap) => {
-        const data = subSnap.val();
-        if (data) showRollResult(data.resultado);
+          setTimeout(() => {
+            container.style.opacity = 0;
+          }, 1500);  // Exibe por 1.5 segundos com fade mais rápido
+        }
       });
     });
   </script>
