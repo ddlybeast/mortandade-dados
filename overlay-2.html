@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Overlay Mortandade RPG - Layout Novo com Roxo</title>
+  <style>
+    @font-face {
+      font-family: 'Democratica';
+      src: url('fonts/Democratica.ttf') format('truetype');
+    }
+
+    body {
+      background: transparent;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 1920px;
+      height: 1080px;
+      font-family: 'Democratica', Arial, sans-serif;
+      position: relative;
+    }
+
+    .playerContainer {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .playerContainer img {
+      width: 100px;
+      height: 100px;
+      display: block;
+    }
+
+    .rollNumber {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
+      font-weight: bold;
+      color: white;
+      pointer-events: none;
+    }
+
+    /* Glow colorido por jogador */
+    .glow-Abaddon { text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; }
+    .glow-Zarina  { text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff69b4; }
+    .glow-Qing-Yu { text-shadow: 0 0 20px #00bfff, 0 0 40px #00bfff; }
+    .glow-Harold  { text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700; }
+    .glow-Vazio   { text-shadow: 0 0 20px #8000FF, 0 0 40px #8000FF; }
+
+    /* Posições exatas (origem top-left da imagem) */
+    #player-Abaddon { top: 96px; left: 672px; }
+    #player-Qing-Yu { top: 96px; left: 1103px; }
+    #player-Vazio   { top: 96px; left: 1534px; }
+    #player-Zarina  { top: 611px; left: 868px; }
+    #player-Harold  { top: 611px; left: 1299px; }
+  </style>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+  <div id="player-Abaddon" class="playerContainer">
+    <img src="dice-d8.png" alt="Dado">
+    <div class="rollNumber glow-Abaddon"></div>
+  </div>
+
+  <div id="player-Qing-Yu" class="playerContainer">
+    <img src="dice-d8.png" alt="Dado">
+    <div class="rollNumber glow-Qing-Yu"></div>
+  </div>
+
+  <div id="player-Vazio" class="playerContainer">
+    <img src="dice-d8.png" alt="Dado">
+    <div class="rollNumber glow-Vazio"></div>
+  </div>
+
+  <div id="player-Zarina" class="playerContainer">
+    <img src="dice-d8.png" alt="Dado">
+    <div class="rollNumber glow-Zarina"></div>
+  </div>
+
+  <div id="player-Harold" class="playerContainer">
+    <img src="dice-d8.png" alt="Dado">
+    <div class="rollNumber glow-Harold"></div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDW7ebno-w4ndmPVnLXHJOxj2wlDQ2a4tc",
+      authDomain: "mortandade-rpg-dice.firebaseapp.com",
+      databaseURL: "https://mortandade-rpg-dice-default-rtdb.firebaseio.com",
+      projectId: "mortandade-rpg-dice",
+      storageBucket: "mortandade-rpg-dice.appspot.com",
+      messagingSenderId: "633433480898",
+      appId: "1:633433480898:web:26f8813045490b12c4655b"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const players = ["Abaddon", "Qing-Yu", "Vazio", "Zarina", "Harold"];
+
+    players.forEach(player => {
+      const container = document.getElementById('player-' + player);
+      const numberDiv = container.querySelector('.rollNumber');
+
+      db.ref('rolagens/' + player).limitToLast(1).on('child_added', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          numberDiv.innerText = data.resultado;
+          container.style.opacity = 1;
+
+          setTimeout(() => {
+            container.style.opacity = 0;
+          }, 1500);
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
