@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Overlay Mortandade RPG - Glow e Fade Rápido</title>
+  <title>Overlay Mortandade RPG - Layout 1920x1080</title>
   <style>
     @font-face {
       font-family: 'Democratica';
@@ -14,7 +14,10 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
+      width: 1920px;
+      height: 1080px;
       font-family: 'Democratica', Arial, sans-serif;
+      position: relative;
     }
 
     .playerContainer {
@@ -40,23 +43,21 @@
       font-size: 120px;
       font-weight: bold;
       color: white;
-      text-shadow: 0 0 10px white;
       pointer-events: none;
     }
 
     /* Glow colorido por jogador */
-    .glow-Abaddon { text-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00; }  /* Verde */
-    .glow-Zarina { text-shadow: 0 0 30px #ff69b4, 0 0 60px #ff69b4; }  /* Rosa */
-    .glow-Qing-Yu { text-shadow: 0 0 30px #00bfff, 0 0 60px #00bfff; } /* Azul */
-    .glow-Harold { text-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700; }  /* Amarelo */
-    .glow-Vazio { text-shadow: 0 0 30px white, 0 0 60px white; }        /* Branco */
+    .glow-Abaddon { text-shadow: 0 0 30px #00ff00, 0 0 60px #00ff00; }
+    .glow-Zarina  { text-shadow: 0 0 30px #ff69b4, 0 0 60px #ff69b4; }
+    .glow-Qing-Yu { text-shadow: 0 0 30px #00bfff, 0 0 60px #00bfff; }
+    .glow-Harold  { text-shadow: 0 0 30px #ffd700, 0 0 60px #ffd700; }
+    .glow-Vazio   { text-shadow: 0 0 30px white, 0 0 60px white; }
 
-    /* Exemplo de posições (ajuste conforme quiser) */
-    #player-Zarina { top: 5%; left: 5%; }
-    #player-Abaddon { top: 5%; left: 55%; }
-    #player-Qing-Yu { top: 55%; left: 5%; }
-    #player-Harold { top: 55%; left: 55%; }
-    #player-Vazio { top: 30%; left: 30%; }
+    /* Posicionamento exato */
+    #player-Abaddon { top: 96px; left: 848px; }
+    #player-Zarina  { top: 611px; left: 848px; }
+    #player-Qing-Yu { top: 96px; left: 1461px; }
+    #player-Harold  { top: 611px; left: 1461px; }
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -64,15 +65,14 @@
 </head>
 <body>
 
-  <!-- Containers de cada personagem -->
-  <div id="player-Zarina" class="playerContainer">
-    <img src="dice-d8.png" alt="Dado">
-    <div class="rollNumber glow-Zarina"></div>
-  </div>
-
   <div id="player-Abaddon" class="playerContainer">
     <img src="dice-d8.png" alt="Dado">
     <div class="rollNumber glow-Abaddon"></div>
+  </div>
+
+  <div id="player-Zarina" class="playerContainer">
+    <img src="dice-d8.png" alt="Dado">
+    <div class="rollNumber glow-Zarina"></div>
   </div>
 
   <div id="player-Qing-Yu" class="playerContainer">
@@ -83,11 +83,6 @@
   <div id="player-Harold" class="playerContainer">
     <img src="dice-d8.png" alt="Dado">
     <div class="rollNumber glow-Harold"></div>
-  </div>
-
-  <div id="player-Vazio" class="playerContainer">
-    <img src="dice-d8.png" alt="Dado">
-    <div class="rollNumber glow-Vazio"></div>
   </div>
 
   <script>
@@ -104,7 +99,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const players = ["Zarina", "Abaddon", "Qing-Yu", "Harold", "Vazio"];
+    const players = ["Zarina", "Abaddon", "Qing-Yu", "Harold"];
 
     players.forEach(player => {
       const container = document.getElementById('player-' + player);
@@ -118,7 +113,7 @@
 
           setTimeout(() => {
             container.style.opacity = 0;
-          }, 1500);  // Exibe por 1.5 segundos com fade mais rápido
+          }, 1500);  // Exibe por 1.5 segundos
         }
       });
     });
