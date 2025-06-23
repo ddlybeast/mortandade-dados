@@ -2,41 +2,85 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Overlay - Mortandade RPG</title>
+  <title>Overlay Mortandade RPG</title>
   <style>
-    body { background: transparent; color: white; font-size: 32px; font-family: Arial, sans-serif; }
+    body {
+      background: transparent;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    #overlayContainer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    #overlayContainer img {
+      width: 200px;
+      height: auto;
+    }
+
+    #rollNumber {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 48px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px #000;
+    }
   </style>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-<div id="overlayResult">Aguardando rolagem...</div>
+  <div id="overlayContainer">
+    <img src="dice-d8.png" alt="Dado">
+    <div id="rollNumber"></div>
+  </div>
 
-<script>
-  // Configuração Firebase (mesma do index.html)
-  const firebaseConfig = {
-    apiKey: "AIzaSyDW7ebno-w4ndmPVnLXHJOxj2wlDQ2a4tc",
-    authDomain: "mortandade-rpg-dice.firebaseapp.com",
-    databaseURL: "https://mortandade-rpg-dice-default-rtdb.firebaseio.com",
-    projectId: "mortandade-rpg-dice",
-    storageBucket: "mortandade-rpg-dice.appspot.com",
-    messagingSenderId: "633433480898",
-    appId: "1:633433480898:web:26f8813045490b12c4655b"
-  };
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDW7ebno-w4ndmPVnLXHJOxj2wlDQ2a4tc",
+      authDomain: "mortandade-rpg-dice.firebaseapp.com",
+      databaseURL: "https://mortandade-rpg-dice-default-rtdb.firebaseio.com",
+      projectId: "mortandade-rpg-dice",
+      storageBucket: "mortandade-rpg-dice.appspot.com",
+      messagingSenderId: "633433480898",
+      appId: "1:633433480898:web:26f8813045490b12c4655b"
+    };
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-  db.ref('ultimaRolagem').on('value', (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-      document.getElementById('overlayResult').innerText = data.resultado;
-    } else {
-      document.getElementById('overlayResult').innerText = 'Aguardando rolagem...';
+    const overlay = document.getElementById('overlayContainer');
+    const rollNumber = document.getElementById('rollNumber');
+
+    function showRollResult(number) {
+      rollNumber.innerText = number;
+      overlay.style.opacity = 1;
+
+      setTimeout(() => {
+        overlay.style.opacity = 0;
+      }, 3000);  // 3 segundos visível
     }
-  });
-</script>
+
+    db.ref('rolagens').limitToLast(1).on('child_added', (snapshot) => {
+      snapshot.ref.limitToLast(1).on('child_added', (subSnap) => {
+        const data = subSnap.val();
+        if (data) showRollResult(data.resultado);
+      });
+    });
+  </script>
 
 </body>
 </html>

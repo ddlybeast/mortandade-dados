@@ -5,68 +5,132 @@
   <title>Mortandade RPG - Rolagem de Dados</title>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <style>
+    body {
+      background-color: #1c1c1c;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #a30000;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    label, select, input, button {
+      margin: 10px;
+      font-size: 16px;
+    }
+
+    select, input {
+      padding: 5px;
+      background-color: #333;
+      color: #e0e0e0;
+      border: 1px solid #555;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #a30000;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #7a0000;
+    }
+
+    #result {
+      color: #d40000;
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-<h1>Mortandade RPG - Rolagem de Dados</h1>
+  <h1>Mortandade RPG - Rolagem de Dados</h1>
 
-<select id="diceType">
-  <option value="2">d2</option>
-  <option value="3">d3</option>
-  <option value="4">d4</option>
-  <option value="6">d6</option>
-  <option value="8">d8</option>
-  <option value="9">d9</option>
-  <option value="10">d10</option>
-  <option value="12">d12</option>
-  <option value="20">d20</option>
-  <option value="50">d50</option>
-  <option value="100">d100</option>
-</select>
+  <div>
+    <label for="playerName">Nome do peão:</label>
+    <input type="text" id="playerName" placeholder="Meu nome">
+  </div>
 
-<input type="number" id="diceCount" value="1" min="1" max="20">
-<button onclick="rollDice()">Rolar Dados 🎲</button>
+  <div>
+    <label for="diceType">Tipo de dado:</label>
+    <select id="diceType">
+      <option value="2">d2</option>
+      <option value="3">d3</option>
+      <option value="4">d4</option>
+      <option value="6">d6</option>
+      <option value="8">d8</option>
+      <option value="9">d9</option>
+      <option value="10">d10</option>
+      <option value="12">d12</option>
+      <option value="20">d20</option>
+      <option value="50">d50</option>
+      <option value="100">d100</option>
+    </select>
+  </div>
 
-<h2 id="result"></h2>
+  <div>
+    <label for="diceCount">Quantidade de dados:</label>
+    <input type="number" id="diceCount" value="1" min="1" max="20">
+  </div>
 
-<script>
-  // Configuração do Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyDW7ebno-w4ndmPVnLXHJOxj2wlDQ2a4tc",
-    authDomain: "mortandade-rpg-dice.firebaseapp.com",
-    databaseURL: "https://mortandade-rpg-dice-default-rtdb.firebaseio.com",
-    projectId: "mortandade-rpg-dice",
-    storageBucket: "mortandade-rpg-dice.appspot.com",
-    messagingSenderId: "633433480898",
-    appId: "1:633433480898:web:26f8813045490b12c4655b"
-  };
+  <button onclick="rollDice()">🎲 Rolar Dados 🎲</button>
 
-  // Inicializar Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+  <h2 id="result">Aguardando rolagem...</h2>
 
-  function rollDice() {
-    const type = parseInt(document.getElementById('diceType').value);
-    const count = parseInt(document.getElementById('diceCount').value);
-    let rolls = [];
-    for (let i = 0; i < count; i++) {
-      rolls.push(Math.floor(Math.random() * type) + 1);
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDW7ebno-w4ndmPVnLXHJOxj2wlDQ2a4tc",
+      authDomain: "mortandade-rpg-dice.firebaseapp.com",
+      databaseURL: "https://mortandade-rpg-dice-default-rtdb.firebaseio.com",
+      projectId: "mortandade-rpg-dice",
+      storageBucket: "mortandade-rpg-dice.appspot.com",
+      messagingSenderId: "633433480898",
+      appId: "1:633433480898:web:26f8813045490b12c4655b"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function rollDice() {
+      const type = parseInt(document.getElementById('diceType').value);
+      const count = parseInt(document.getElementById('diceCount').value);
+      const playerName = document.getElementById('playerName').value.trim();
+
+      if (playerName === '') {
+        alert('Por favor, insira o nome do peão.');
+        return;
+      }
+
+      let rolls = [];
+      for (let i = 0; i < count; i++) {
+        rolls.push(Math.floor(Math.random() * type) + 1);
+      }
+      const total = rolls.reduce((a, b) => a + b, 0);
+      const resultText = `Rolagem: ${rolls.join(' + ')} = ${total}`;
+      document.getElementById('result').innerText = resultText;
+
+      const rollData = {
+        resultado: total,
+        detalhes: resultText,
+        timestamp: Date.now()
+      };
+
+      db.ref('rolagens/' + playerName + '/' + Date.now()).set(rollData);
     }
-    const total = rolls.reduce((a, b) => a + b, 0);
-    const resultText = `Rolagem: ${rolls.join(' + ')} = ${total}`;
-    document.getElementById('result').innerText = resultText;
-
-    // Salvar no Firebase
-    db.ref('ultimaRolagem').set({
-      resultado: resultText,
-      timestamp: Date.now()
-    }).then(() => {
-      console.log('Resultado enviado para o Firebase');
-    }).catch((error) => {
-      console.error('Erro ao salvar no Firebase:', error);
-    });
-  }
-</script>
+  </script>
 
 </body>
 </html>
