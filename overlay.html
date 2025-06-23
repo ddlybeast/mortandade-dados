@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Overlay Mortandade RPG</title>
+  <style>
+    body { background: transparent; color: white; font-size: 24px; font-family: Arial, sans-serif; }
+  </style>
+</head>
+<body>
+
+  <div id="overlayResult"></div>
+
+  <script>
+    function updateOverlay() {
+      const result = localStorage.getItem('obs_result') || 'Aguardando rolagem...';
+      document.getElementById('overlayResult').innerText = result;
+    }
+    setInterval(updateOverlay, 1000); // Atualiza a cada 1 segundo
+    updateOverlay();
+  </script>
+
+</body>
+</html>
